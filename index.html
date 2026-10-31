@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animasi Prinsip Kerja Bimetal Pada Setrika Listrik</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        canvas {
+            touch-action: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-3 sm:p-6">
+    <!-- Header -->
+    <header class="max-w-5xl mx-auto w-full text-center mb-4">
+        <h1 class="text-2xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-500 to-red-500">
+            Prinsip Kerja Bimetal Pada Setrika Listrik
+        </h1>
+        <p class="text-xs sm:text-base text-slate-400 mt-1">
+            Simulasi Interaktif Otomatisasi Sakelar Termostat Berbasis Pemuaian Logam
+        </p>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto w-full flex-1 flex flex-col gap-4">
+        <!-- Canvas Box -->
+        <div class="relative w-full bg-slate-800/90 rounded-2xl shadow-2xl border border-slate-700/80 overflow-hidden flex flex-col">
+            <div class="p-3 bg-slate-900/60 border-b border-slate-700 flex flex-wrap justify-between items-center gap-2">
+                <!-- Status Badge -->
+                <div id="statusBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="statusText">Setrika Dingin: Listrik TERHUBUNG (Pemanasan Berlangsung)</span>
+                </div>
+                <!-- Temperature Indicator -->
+                <div class="flex items-center gap-2 text-xs sm:text-sm font-bold bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+                    <span class="text-slate-400">Suhu Element:</span>
+                    <span id="tempValue" class="text-amber-400 text-base">25°C</span>
+                </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="w-full flex-1 min-h-[320px] sm:min-h-[420px] relative">
+                <canvas id="simCanvas" class="w-full h-full block"></canvas>
+            </div>
+
+            <!-- Interactive Control Bar -->
+            <div class="p-4 bg-slate-900/80 border-t border-slate-700 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="w-full md:w-2/3 flex flex-col gap-1.5">
+                    <div class="flex justify-between text-xs font-semibold text-slate-300">
+                        <label for="tempSlider">Atur Suhu Manual:</label>
+                        <span class="text-orange-400 font-bold">Dingin (25°C) ➔ Panas (250°C)</span>
+                    </div>
+                    <input type="range" id="tempSlider" min="25" max="250" value="25" 
+                           class="w-full h-2.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-orange-500 focus:outline-none">
+                </div>
+
+                <div class="flex items-center gap-2 w-full md:w-auto justify-center">
+                    <button id="autoToggleBtn" class="w-full md:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        <span>Mulai Siklus Otomatis</span>
+                    </button>
+                    <button id="resetBtn" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-700 hover:bg-slate-600 text-slate-200 transition-all border border-slate-600">
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Explanation Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Card 1 -->
+            <div class="bg-slate-800/60 backdrop-blur border border-slate-700/80 p-4 rounded-xl flex flex-col gap-2">
+                <div class="flex items-center gap-2 text-amber-400 font-bold text-sm sm:text-base">
+                    <div class="w-3 h-3 rounded-full bg-amber-400"></div>
+                    <span>Saat Suhu Dingin (Listrik Menyala)</span>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    Keping bimetal berada dalam posisi lurus. Ujung kontak listrik bawah bersentuhan rapat dengan kontak atas, sehingga 
+                    <strong class="text-emerald-400">arus listrik mengalir</strong> menuju elemen pemanas. Lampu indikator setrika menyala dan suhu terus meningkat.
+                </p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-slate-800/60 backdrop-blur border border-slate-700/80 p-4 rounded-xl flex flex-col gap-2">
+                <div class="flex items-center gap-2 text-red-400 font-bold text-sm sm:text-base">
+                    <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                    <span>Saat Suhu Terlalu Panas (Listrik Terputus)</span>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    Logam bagian bawah memuai lebih panjang daripada logam bagian atas. Perbedaan muai ini memaksa bimetal <strong class="text-amber-300">melengkung ke bawah</strong>. 
+                    Akibatnya, kontak listrik terpisah, <strong class="text-red-400">arus listrik terputus</strong>, dan setrika aman dari bahaya ketiadaan pengontrol suhu.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-4 text-center text-xs text-slate-500">
+        Media Pembelajaran Fisika IPA SMP/MTs Kelas 7 — Konsep Pemuaian & Termostat Bimetal
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const tempSlider = document.getElementById('tempSlider');
+        const tempValueText = document.getElementById('tempValue');
+        const statusBadge = document.getElementById('statusBadge');
+        const statusText = document.getElementById('statusText');
+        const autoToggleBtn = document.getElementById('autoToggleBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // State variables
+        let temperature = 25; // °C
+        let isAutoMode = false;
+        let heatDirection = 1; // 1 for heating up, -1 for cooling down
+        const CRITICAL_TEMP = 170; // Temperature where circuit breaks
+
+        // Handle Canvas Resizing
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Control Listeners
+        tempSlider.addEventListener('input', (e) => {
+            if (isAutoMode) stopAutoMode();
+            temperature = parseFloat(e.target.value);
+        });
+
+        autoToggleBtn.addEventListener('click', () => {
+            if (isAutoMode) {
+                stopAutoMode();
+            } else {
+                startAutoMode();
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            stopAutoMode();
+            temperature = 25;
+            tempSlider.value = 25;
+        });
+
+        function startAutoMode() {
+            isAutoMode = true;
+            autoToggleBtn.innerHTML = `
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                <span>Hentikan Otomatis</span>
+            `;
+            autoToggleBtn.classList.remove('from-orange-500', 'to-amber-500');
+            autoToggleBtn.classList.add('from-red-600', 'to-rose-600');
+        }
+
+        function stopAutoMode() {
+            isAutoMode = false;
+            autoToggleBtn.innerHTML = `
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <span>Mulai Siklus Otomatis</span>
+            `;
+            autoToggleBtn.classList.remove('from-red-600', 'to-rose-600');
+            autoToggleBtn.classList.add('from-orange-500', 'to-amber-500');
+        }
+
+        // Main Animation Loop
+        function animate() {
+            // Auto Mode Temperature Progression Logic
+            if (isAutoMode) {
+                if (heatDirection === 1) {
+                    temperature += 0.8;
+                    if (temperature >= 240) heatDirection = -1;
+                } else {
+                    temperature -= 0.6;
+                    if (temperature <= 40) heatDirection = 1;
+                }
+                tempSlider.value = temperature;
+            }
+
+            // Update UI elements
+            tempValueText.textContent = `${Math.round(temperature)}°C`;
+            const isCircuitConnected = temperature < CRITICAL_TEMP;
+
+            if (isCircuitConnected) {
+                statusBadge.className = "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                statusText.textContent = "Suhu Aman: Listrik TERHUBUNG (Pemanas ON)";
+            } else {
+                statusBadge.className = "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/30";
+                statusText.textContent = "Suhu Terlalu Panas: Listrik TERPUTUS (Pemanas OFF)";
+            }
+
+            // Clear Canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Graphic Scene
+            drawScene(temperature, isCircuitConnected);
+
+            requestAnimationFrame(animate);
+        }
+
+        // Draw Complete Simulation Scene (Iron Body + Thermostat Switch)
+        function drawScene(temp, isConnected) {
+            const w = canvas.width;
+            const h = canvas.height;
+            const scale = Math.min(w / 960, h / 450);
+
+            ctx.save();
+            // Center scene with extra horizontal room for the Iron illustration
+            ctx.translate(w / 2 - 450 * scale, h / 2 - 190 * scale);
+            ctx.scale(scale, scale);
+
+            // -------------------------------------------------------------
+            // SECTION 1: ILUSTRASI SETRIKA LISTRIK REALISTIS (Kiri)
+            // -------------------------------------------------------------
+            const ironX = 25;
+            const ironY = 100;
+
+            // Heat Glow background behind Soleplate
+            if (isConnected) {
+                const heatGlow = ctx.createRadialGradient(ironX + 115, ironY + 235, 15, ironX + 115, ironY + 235, 130);
+                const glowIntensity = Math.min(0.85, (temp / 250));
+                heatGlow.addColorStop(0, `rgba(239, 68, 68, ${glowIntensity})`);
+                heatGlow.addColorStop(0.5, `rgba(249, 115, 22, ${glowIntensity * 0.5})`);
+                heatGlow.addColorStop(1, "rgba(239, 68, 68, 0)");
+                ctx.fillStyle = heatGlow;
+                ctx.beginPath();
+                ctx.arc(ironX + 115, ironY + 235, 130, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 1. Soleplate (Alas Logam Pemanas Stainless Steel / Keramik)
+            const soleGrad = ctx.createLinearGradient(ironX, ironY + 215, ironX, ironY + 235);
+            soleGrad.addColorStop(0, "#94a3b8");
+            soleGrad.addColorStop(0.5, "#cbd5e1");
+            soleGrad.addColorStop(1, "#64748b");
+            ctx.fillStyle = soleGrad;
+            ctx.strokeStyle = "#334155";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(ironX + 5, ironY + 232);
+            ctx.lineTo(ironX + 225, ironY + 232);
+            ctx.quadraticCurveTo(ironX + 265, ironY + 232, ironX + 270, ironY + 215);
+            ctx.lineTo(ironX + 235, ironY + 215);
+            ctx.lineTo(ironX + 5, ironY + 215);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Soleplate Steam Vent Pattern / Holes Details
+            ctx.fillStyle = "#475569";
+            for (let i = 0; i < 6; i++) {
+                ctx.beginPath();
+                ctx.arc(ironX + 35 + i * 32, ironY + 224, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 2. Inner Heat Element Housing (Logam Pemanas Dalam)
+            const innerGrad = ctx.createLinearGradient(ironX + 20, ironY + 195, ironX + 220, ironY + 215);
+            if (isConnected) {
+                innerGrad.addColorStop(0, "#ef4444");
+                innerGrad.addColorStop(0.5, "#f97316");
+                innerGrad.addColorStop(1, "#dc2626");
+            } else {
+                innerGrad.addColorStop(0, "#475569");
+                innerGrad.addColorStop(1, "#334155");
+            }
+            ctx.fillStyle = innerGrad;
+            ctx.beginPath();
+            ctx.moveTo(ironX + 12, ironY + 215);
+            ctx.lineTo(ironX + 230, ironY + 215);
+            ctx.quadraticCurveTo(ironX + 250, ironY + 210, ironX + 230, ironY + 195);
+            ctx.lineTo(ironX + 12, ironY + 195);
+            ctx.closePath();
+            ctx.fill();
+
+            // Heating Coils Simulation Inside Soleplate
+            ctx.strokeStyle = isConnected ? "#fef08a" : "#64748b";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(ironX + 25, ironY + 205);
+            for (let x = ironX + 35; x <= ironX + 210; x += 15) {
+                ctx.lineTo(x, ironY + (x % 30 === 0 ? 200 : 210));
+            }
+            ctx.stroke();
+
+            // 3. Main Modern Iron Body & Water Tank Translucent Shell
+            const bodyGrad = ctx.createLinearGradient(ironX, ironY + 40, ironX + 250, ironY + 215);
+            bodyGrad.addColorStop(0, "rgba(14, 165, 233, 0.45)");
+            bodyGrad.addColorStop(0.5, "rgba(56, 189, 248, 0.35)");
+            bodyGrad.addColorStop(1, "rgba(3, 105, 161, 0.5)");
+
+            ctx.fillStyle = bodyGrad;
+            ctx.strokeStyle = "#0284c7";
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(ironX + 10, ironY + 195);
+            ctx.lineTo(ironX + 232, ironY + 195);
+            ctx.quadraticCurveTo(ironX + 265, ironY + 180, ironX + 240, ironY + 125);
+            ctx.lineTo(ironX + 180, ironY + 95);
+            // Curved Handle
+            ctx.quadraticCurveTo(ironX + 110, ironY + 15, ironX + 40, ironY + 35);
+            ctx.quadraticCurveTo(ironX + 10, ironY + 60, ironX + 10, ironY + 195);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Real Water Level Simulation in Tank
+            const waterGrad = ctx.createLinearGradient(ironX, ironY + 140, ironX, ironY + 195);
+            waterGrad.addColorStop(0, "rgba(56, 189, 248, 0.25)");
+            waterGrad.addColorStop(1, "rgba(14, 165, 233, 0.6)");
+            ctx.fillStyle = waterGrad;
+            ctx.beginPath();
+            ctx.moveTo(ironX + 15, ironY + 195);
+            ctx.lineTo(ironX + 225, ironY + 195);
+            ctx.quadraticCurveTo(ironX + 240, me => ironY + 180, ironX + 225, ironY + 160);
+            ctx.quadraticCurveTo(ironX + 120, ironY + 150, ironX + 15, ironX % 2 === 0 ? ironY + 165 : ironY + 164);
+            ctx.closePath();
+            ctx.fill();
+
+            // MAX Water Level Line
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+            ctx.setLineDash([3, 3]);
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(ironX + 35, ironY + 158);
+            ctx.lineTo(ironX + 180, ironY + 158);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = "#e0f2fe";
+            ctx.font = "bold 9px Inter, sans-serif";
+            ctx.fillText("MAX --", ironX + 195, ironY + 161);
+
+            // 4. Ergonomic Top Handle Frame & Buttons
+            const handleGrad = ctx.createLinearGradient(ironX + 30, ironY + 20, ironX + 180, ironY + 110);
+            handleGrad.addColorStop(0, "#1e293b");
+            handleGrad.addColorStop(0.5, "#334155");
+            handleGrad.addColorStop(1, "#0f172a");
+            ctx.fillStyle = handleGrad;
+            ctx.strokeStyle = "#475569";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(ironX + 25, ironY + 195);
+            ctx.lineTo(ironX + 45, ironY + 55);
+            ctx.quadraticCurveTo(ironX + 105, ironY + 40, ironX + 165, ironY + 100);
+            ctx.lineTo(ironX + 150, ironY + 125);
+            ctx.quadraticCurveTo(ironX + 105, ironY + 75, ironX + 55, ironY + 85);
+            ctx.lineTo(ironX + 40, ironY + 195);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Steam Spray Button (Top Nose)
+            ctx.fillStyle = "#0284c7";
+            ctx.fillRect(ironX + 175, ironY + 92, 14, 10);
+            ctx.strokeRect(ironX + 175, ironY + 92, 14, 10);
+            ctx.fillStyle = "#38bdf8";
+            ctx.fillRect(ironX + 192, ironY + 97, 14, 10);
+            ctx.strokeRect(ironX + 192, ironY + 97, 14, 10);
+
+            // 5. Realistic Thermostat Control Dial Knob (Pengatur Suhu)
+            const knobCenterX = ironX + 115;
+            const knobCenterY = ironY + 145;
+            
+            // Dial Outer Base Shadow & Bezel
+            ctx.fillStyle = "#0f172a";
+            ctx.beginPath();
+            ctx.ellipse(knobCenterX, knobCenterY, 32, 22, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "#64748b";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Dial Inner Rotary Wheel
+            const knobGrad = ctx.createRadialGradient(knobCenterX, knobCenterY, 5, knobCenterX, knobCenterY, 28);
+            knobGrad.addColorStop(0, "#475569");
+            knobGrad.addColorStop(0.8, "#1e293b");
+            knobGrad.addColorStop(1, "#0f172a");
+            ctx.fillStyle = knobGrad;
+            ctx.beginPath();
+            ctx.ellipse(knobCenterX, knobCenterY, 27, 18, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Temperature Markings around Knob
+            ctx.fillStyle = "#94a3b8";
+            ctx.font = "bold 8px Inter, sans-serif";
+            ctx.fillText("MIN", knobCenterX - 20, knobCenterY + 14);
+            ctx.fillText("MED", knobCenterX, knobCenterY + 16);
+            ctx.fillText("MAX", knobCenterX + 20, knobCenterY + 14);
+
+            // Knob Pointer Indicator (Rotates with temperature)
+            const knobAngle = ((temp - 25) / 225) * Math.PI - Math.PI / 1.1;
+            ctx.beginPath();
+            ctx.moveTo(knobCenterX, knobCenterY);
+            ctx.lineTo(knobCenterX + 22 * Math.cos(knobAngle), knobCenterY + 14 * Math.sin(knobAngle));
+            ctx.strokeStyle = "#f59e0b";
+            ctx.lineWidth = 3.5;
+            ctx.stroke();
+            
+            ctx.fillStyle = "#fbbf24";
+            ctx.beginPath();
+            ctx.arc(knobCenterX, knobCenterY, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 6. Modern LED Pilot Indicator Light (Lampu Indikator Setrika Realistis)
+            const lampX = ironX + 68;
+            const lampY = ironY + 70;
+            ctx.fillStyle = "#1e293b";
+            ctx.beginPath();
+            ctx.arc(lampX, lampY, 11, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "#475569";
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            if (isConnected) {
+                // Glow Lens effect
+                const lampGlow = ctx.createRadialGradient(lampX, lampY, 2, lampX, lampY, 14);
+                lampGlow.addColorStop(0, "#ffffff");
+                lampGlow.addColorStop(0.4, "#f59e0b");
+                lampGlow.addColorStop(1, "rgba(245, 158, 11, 0)");
+                ctx.fillStyle = lampGlow;
+                ctx.beginPath();
+                ctx.arc(lampX, lampY, 15, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = "#fbbf24";
+                ctx.beginPath();
+                ctx.arc(lampX, lampY, 6, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                ctx.fillStyle = "#475569";
+                ctx.beginPath();
+                ctx.arc(lampX, lampY, 6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Power Cord & Relief Bushing (Kabel Listrik Belakang)
+            ctx.fillStyle = "#334155";
+            ctx.beginPath();
+            ctx.moveTo(ironX + 10, ironY + 160);
+            ctx.lineTo(ironX - 8, ironY + 150);
+            ctx.lineTo(ironX - 8, ironY + 175);
+            ctx.lineTo(ironX + 10, ironY + 185);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Flexible Cord Strand
+            ctx.strokeStyle = "#64748b";
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(ironX - 8, ironY + 162);
+            ctx.quadraticCurveTo(ironX - 45, ironY + 150, ironX - 60, ironY + 210);
+            ctx.stroke();
+
+            // Text Label for Iron Illustration
+            ctx.fillStyle = "#f8fafc";
+            ctx.font = "bold 13px Inter, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("Setrika Listrik Modern", ironX + 125, ironY + 258);
+            ctx.font = "11px Inter, sans-serif";
+            ctx.fillStyle = isConnected ? "#fbbf24" : "#94a3b8";
+            ctx.fillText(isConnected ? "● Lampu Indikator ON (Memanaskan)" : "○ Lampu Indikator OFF (Suhu Tercapai)", ironX + 125, ironY + 274);
+
+            // Connection Arrow from Iron to Thermostat Details
+            ctx.strokeStyle = "#64748b";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(ironX + 260, ironY + 145);
+            ctx.lineTo(ironX + 300, ironY + 145);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // -------------------------------------------------------------
+            // SECTION 2: SKEMA TERMOSTAT BIMETAL (Kanan)
+            // -------------------------------------------------------------
+            const shiftX = 300;
+
+            // Header Banner
+            ctx.fillStyle = "#1e293b";
+            ctx.fillRect(shiftX, 0, 600, 45);
+            ctx.strokeStyle = "#475569";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(shiftX, 0, 600, 45);
+
+            ctx.fillStyle = isConnected ? "#38bdf8" : "#f43f5e";
+            ctx.font = "bold 16px Inter, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(
+                isConnected ? "SKEMA SAKELAR: TERHUBUNG (Kontak Bersentuhan)" : "SKEMA SAKELAR: TERPUTUS (Bimetal Melengkung)",
+                shiftX + 300,
+                28
+            );
+
+            // Fixed Base / Support Pillar (Right side)
+            ctx.fillStyle = "#cbd5e1";
+            ctx.strokeStyle = "#0f172a";
+            ctx.lineWidth = 3;
+            ctx.fillRect(shiftX + 480, 90, 60, 240);
+            ctx.strokeRect(shiftX + 480, 90, 60, 240);
+
+            // Screws
+            ctx.fillStyle = "#64748b";
+            ctx.beginPath();
+            ctx.arc(shiftX + 510, 120, 5, 0, Math.PI * 2);
+            ctx.arc(shiftX + 510, 300, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Upper Fixed Arm (Rigid Contact Arm)
+            ctx.fillStyle = "#475569";
+            ctx.fillRect(shiftX + 90, 150, 390, 22);
+            ctx.strokeRect(shiftX + 90, 150, 390, 22);
+
+            // Top Contact Point (Black Oval)
+            ctx.fillStyle = "#0f172a";
+            ctx.beginPath();
+            ctx.ellipse(shiftX + 125, 175, 18, 9, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Calculate Bimetal Bending (Bending downwards as temperature increases)
+            const bendFactor = Math.max(0, (temp - 25) / (250 - 25));
+            const maxDeflection = 42;
+            const deflection = bendFactor * maxDeflection;
+
+            // Bimetal Anchor Coordinates
+            const startX = shiftX + 480;
+            const startY = 240;
+            const endX = shiftX + 90;
+            const currentEndY = startY + deflection;
+
+            const cpX = (startX + endX) / 2;
+            const cpY = startY + deflection * 1.1;
+
+            // Draw Bimetal Layer 1 (Upper Metal - Bronze)
+            ctx.beginPath();
+            ctx.moveTo(startX, startY - 8);
+            ctx.quadraticCurveTo(cpX, cpY - 8, endX, currentEndY - 8);
+            ctx.lineTo(endX, currentEndY);
+            ctx.quadraticCurveTo(cpX, cpY, startX, startY);
+            ctx.closePath();
+            ctx.fillStyle = "#fb923c";
+            ctx.fill();
+            ctx.strokeStyle = "#0f172a";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw Bimetal Layer 2 (Lower Metal - Steel)
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.quadraticCurveTo(cpX, cpY, endX, currentEndY);
+            ctx.lineTo(endX, currentEndY + 8);
+            ctx.quadraticCurveTo(cpX, cpY + 8, startX, startY + 8);
+            ctx.closePath();
+            ctx.fillStyle = "#94a3b8";
+            ctx.fill();
+            ctx.stroke();
+
+            // Bottom Contact Point
+            const bottomContactY = currentEndY - 10;
+            ctx.fillStyle = "#0f172a";
+            ctx.beginPath();
+            ctx.ellipse(shiftX + 125, bottomContactY, 18, 9, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // Annotations
+            ctx.strokeStyle = "#ef4444";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 4]);
+            ctx.beginPath();
+            ctx.arc(shiftX + 125, 175, 42, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Label "Kontak"
+            ctx.fillStyle = "#f8fafc";
+            ctx.font = "bold 15px Inter, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("Kontak", shiftX + 125, 110);
+
+            // Arrow & Label "Bimetal"
+            const arrowX = shiftX + 260;
+            const arrowTipY = startY + (deflection * 0.7) + 12;
+            
+            ctx.fillStyle = "#22c55e";
+            ctx.strokeStyle = "#22c55e";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(arrowX, arrowTipY + 45);
+            ctx.lineTo(arrowX, arrowTipY + 10);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(arrowX - 7, arrowTipY + 18);
+            ctx.lineTo(arrowX, arrowTipY + 4);
+            ctx.lineTo(arrowX + 7, arrowTipY + 18);
+            ctx.fill();
+
+            ctx.fillStyle = "#f8fafc";
+            ctx.font = "bold 16px Inter, sans-serif";
+            ctx.fillText("Bimetal", arrowX, arrowTipY + 68);
+
+            // Metal Type Annotations
+            ctx.font = "11px Inter, sans-serif";
+            ctx.fillStyle = "#fdba74";
+            ctx.fillText("Logam Atas (Koefisien Muai Kecil)", shiftX + 375, startY + (deflection * 0.4) - 14);
+            ctx.fillStyle = "#cbd5e1";
+            ctx.fillText("Logam Bawah (Koefisien Muai Lebih Besar)", shiftX + 375, startY + (deflection * 0.4) + 24);
+
+            // Circuit Glow & Sparks
+            if (isConnected) {
+                const glowGradient = ctx.createRadialGradient(shiftX + 125, 175, 4, shiftX + 125, 175, 35);
+                glowGradient.addColorStop(0, "rgba(56, 189, 248, 0.9)");
+                glowGradient.addColorStop(1, "rgba(56, 189, 248, 0)");
+                ctx.fillStyle = glowGradient;
+                ctx.beginPath();
+                ctx.arc(shiftX + 125, 175, 35, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = `rgba(239, 68, 68, ${Math.min(0.8, (temp / 250))})`;
+                ctx.fillRect(shiftX + 80, 370, 460, 10);
+                ctx.fillStyle = "#ef4444";
+                ctx.font = "12px Inter, sans-serif";
+                ctx.fillText("⚡ Arus Mengalir → Pemanas Aktif", shiftX + 300, 400);
+            } else {
+                ctx.fillStyle = "#334155";
+                ctx.fillRect(shiftX + 80, 370, 460, 10);
+                ctx.fillStyle = "#94a3b8";
+                ctx.font = "12px Inter, sans-serif";
+                ctx.fillText("❄️ Arus Terputus → Pemanas Mati", shiftX + 300, 400);
+            }
+
+            ctx.restore();
+        }
+
+        // Window load listener
+        window.onload = function() {
+            animate();
+        };
+    </script>
+</body>
+</html>
